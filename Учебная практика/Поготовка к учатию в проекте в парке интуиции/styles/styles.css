@@ -1,0 +1,207 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  line-height: 1.3;
+  min-width: 1000px;
+}
+
+img {
+  display: block;
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: rgba(0,100,240,1);
+  border-bottom: 1px solid rgba(0,100,240,0.3);
+}
+
+a:hover {
+  color: rgba(0,200,70,1);
+  border-bottom: 1px solid rgba(0,200,70,0.3);
+}
+
+
+/* TYPOGRAPHY */
+
+h1 {
+  font-size: 3.8em;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 2.5em;
+  line-height: 1.1;
+  margin: 1em 0 .3em;
+}
+
+h3 {
+  font-size: 1.5em;
+  line-height: 1.1;
+  margin: .5em 0;
+}
+
+p {
+  margin: .5em 0;
+}
+
+.text-width {
+  width: 80%;
+}
+
+a.button-link {
+  display: inline-block;
+  margin-top: .4em;
+  border: 1px solid rgba(0,100,240,.3);
+  border-radius: .4em;
+  padding: .4em .8em;
+}
+a.button-link:hover {
+  border: 1px solid rgba(0,200,70,.3);
+}
+
+
+
+/* LAYOUT */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5em;
+  margin-bottom: 10em;
+}
+
+section {
+  width: 80%;
+  padding: .1em 10% 0 0;
+  margin: 2em auto;
+}
+
+footer {
+  display: flex;
+  margin-top: 10em;
+  justify-content: space-between;
+  padding: 0.5em;
+}
+
+ul, ol {
+  padding: 0;
+}
+
+ul li {
+  position: relative;
+  list-style-type: none;
+  padding-left: 1em;
+  margin-bottom: 0.5em;
+}
+
+ul li:before {
+  position: absolute;
+  left: 0;
+  content: "⋅ ";
+}
+
+ol {
+  margin: .5em 0 1em;
+  padding-left: 1.1em;
+}
+
+ol li {
+  /* padding-left: 0.2em; */
+  list-style: decimal outside none;
+  margin-bottom: .5em;
+}
+
+
+
+
+
+.projects {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 2em;
+}
+
+.project-box {
+  width: 460px;
+  height: 300px;
+  overflow: hidden;
+  margin: 0 1em 1em 0;
+}
+
+.projects .project-images {
+  position: relative;
+  
+}
+
+
+
+
+
+
+
+
+
+.park-caption {
+  display: inline-block;
+  margin: 1em 0;
+  padding: .1em 1em .1em 1em;
+  border: 1px solid grey;
+  border-radius: .5em;
+}
+
+#parallax-container {
+  display: flex;
+  align-items: center;
+}
+
+#parallax-background {
+  width:  80%;
+  padding: .6em 7em 1em 1em;
+  background: rgba(0,0,0,0.05);
+  border-radius: .6em;
+}
+
+#parallax-object {
+  width:  20%;
+  margin-left:  -10%;
+}
+
+#parallax-object img{
+  width: 200%;
+}
+
+/* FOR SCRIPTS */
+
+#details{
+  opacity: .1;
+  transform: translate(100px);
+  transition: all 1s;
+}
+
+#details.awake{
+  opacity: 1;
+  transform: translate(0px);
+}
+
+.spray-dot {
+  position: absolute;
+  border-radius: 50%;
+  /* animation: drip 4s; */
+  /* animation-iteration-count: .99; */
+  /* transform: translateY(50px); */
+}
+
+/* @keyframes drip {
+  1% {opacity: 1;transform: translateY(0);}
+  50% {opacity: 1;transform: translateY(50px);}
+  99% {opacity: 1;transform: translateY(50px);}
+  100% {opacity: 0;transform: translateY(50px);}
+} */

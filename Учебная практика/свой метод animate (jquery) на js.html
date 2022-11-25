@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    const Move = {
+        el: [],
+        animationProcess: 0,
+        time: 400,
+        properties: {},
+        baseProperties: {},
+        pFunction: {},
+        finalProperties: {},
+        values: {},
+        css: null,
+        endScript: 0,
+        counter: 0,
+        startTime: 0,
+        animationType: 'linear',
+        callback: function(){},
+        animate: function(el, properties, time, func, animationType){
+
+            if(typeof el === 'undefined' || !el || typeof properties === 'undefined' || !properties) return;
+
+            // if(this.animationProcess){
+            //
+            //     clearTimeout(setTimeoutDescriptor)
+            //
+            //     var self = this
+            //
+            //     var setTimeoutDescriptor = setTimeout(function () {
+            //         self.animate(el, properties, time, func, animationType)
+            //     }, 100)
+            //
+            //     return;
+            //
+            // }
+            //
+            // this.animationProcess = 1;
+
+            let arr = [];
+
+            if(typeof el === 'string'){
+                arr = document.querySelectorAll(el);
+            }else if(el.constructor === Array || typeof el[0] !== 'undefined'){
+                arr = el;
+            }else{
+                arr[0] = el;
+            }
+
+            if(typeof arr._animate === 'undefined'){
+
+                arr._animate = function(){
+
+                    this.el = []
+                    this.animationProcess = 0
+                    this.time = 400
+                    this.properties = {}
+                    this.baseProperties = {}
+                    this.pFunction = {}
+                    this.finalProperties = {}
+                    this.values = {}
+                    this.css = null
+                    this.endScript = 0
+                    this.counter = 0
+                    this.startTime = 0
+                    this.animationType = 'linear'
+                    this.callback = function(){}
+
+                    this.callback = function(){};
+
+                    this.time = typeof time === 'number' ? time : 400;
+
+                    if(typeof func === 'function') this.callback = func;
+                    else if(typeof time === 'function') this.callback = time;
+
+                    if(typeof animationType !== 'undefined') this.animationType = animationType;
+
+                    this.css = null;
+
+                    for(let index = 0; index < this.length; index++){
+
+                        this.properties[index] = {};
+                        this.baseProperties[index] = {};
+                        this.pFunction[index] = {};
+                        this.finalProperties[index] = {};
+                        this.values[index] = {};
+
+                        for(let j in properties){
+
+                            let i = this._camelCase(j);
+
+                            this.finalProperties[index][i] = properties[j];
+
+                            this.properties[index][i] = parseFloat(this.finalProperties[index][i]);
+
+                            this.values[index][i] = '';
+
+                            this.pFunction[index][i] = '';
+
+                            let animationProperty = this[index];
+
+                            let unitArr = null;
+
+                            if(typeof this[index].style[i] !== 'undefined'){
+
+                                animationProperty = this[index].style;
+
+                                unitArr = /^\s*(([^0-9]+)\(([0-9\.]+)(\D*)\))|((\d+)([a-z%]+))/ig.exec(this.finalProperties[index][i]);
+
+                                let tempPropertyValue = animationProperty[i];
+
+                                animationProperty[i] = getComputedStyle(this[index])[i];
+
+                                if(unitArr){
+
+                                    if(typeof unitArr[6] !== 'undefined'){
+
+                                        this.values[index][i] = 'px';
+
+                                        if(unitArr[7] !== 'px'){
+
+                                            this.properties[index][i] = this._createValues(this[index], this.properties[index][i], unitArr[7], i);
+
+                                        }
+
+                                    }else{
+
+                                        this.values[index][i] = unitArr[4];
+
+                                        this.properties[index][i] = unitArr[3];
+
+                                        this.pFunction[index][i] = unitArr[2] + '($$)';
+
+                                        this.baseProperties[index][i] = null;
+
+                                        let property = null;
+
+                                        if(tempPropertyValue){
+
+                                            property = tempPropertyValue.split(/\s+/);
+
+                                        }else{
+
+                                            !this.css && this._createCss();
+
+                                            if(this.css && typeof this.css[index][i] !== 'undefined')
+                                                property = this.css[index][i].split(/\s+/);
+
+                                        }
+
+                                        if(property && typeof property[0] !== 'undefined'){
+
+                                            let regexp = new RegExp(unitArr[2] + '\\(([0-9\\.]+)[\\D]*\\)', 'i');
+
+                                            for(let p = 0; p < property.length; p++){
+
+                                                let value = regexp.exec(property[p]);
+
+                                                if(value) this.baseProperties[index][i] = parseFloat(value[1]);
+                                                else this.pFunction[index][i] += ' ' + property[p];
+
+                                            }
+
+                                        }
+
+                                        if(!this.baseProperties[index][i])
+                                            this.baseProperties[index][i] = /scale/i.test(this.pFunction[index][i]) ? 1.0 : 0;
+
+                                    }
+
+                                }else{
+
+                                    let baseUnit = /[a-z%]+/.exec(animationProperty[i]);
+
+                                    if(baseUnit) this.values[index][i] = baseUnit[0];
+
+                                }
+
+                            }
+
+                            if(typeof this.baseProperties[index][i] === 'undefined'){
+
+                                this.baseProperties[index][i] = isNaN(parseFloat(animationProperty[i])) ? 0 : parseFloat(animationProperty[i]);
+
+                            }
+
+                        }
+
+                    }
+
+                    this.startTime = performance.now();
+                    this._exec();
+
+                };
+
+                arr._exec = function(){
+
+                    let self = this;
+
+                    for(let j = 0; j < this.length; j++){
+
+                        let index = j;
+
+                        for(let name in this.properties[index]){
+
+                            if(!this.properties[index].hasOwnProperty(name)) continue;
+
+                            let i = name;
+
+                            this.endScript++;
+
+                            window.requestAnimationFrame(function animate(time){
+
+                                let timeFraction = ((time - self.startTime) / self.time);
+
+                                if(timeFraction > 1) timeFraction = 1;
+
+                                let progress = self._timing(timeFraction);
+
+                                let el = typeof self[index].style[i] !== 'undefined' ? self[index].style : self[index];
+
+                                let value = self.baseProperties[index][i] + (progress * (self.properties[index][i] - self.baseProperties[index][i]));
+
+                                el[i] = self.pFunction[index][i] ? self.pFunction[index][i].replace('$$', value + self.values[index][i]) : value + self.values[index][i];
+
+                                if(timeFraction < 1){
+
+                                    window.requestAnimationFrame(animate);
+
+                                }else{
+
+                                    if(!self.pFunction[index][i]) el[i] = self.finalProperties[index][i];
+
+                                    self.counter++;
+
+                                    if(self.counter === self.endScript){
+
+                                        self.callback();
+
+                                    }
+
+                                }
+
+                            });
+
+                        }
+
+                    }
+
+                }
+                arr._timing = function(timeFraction){
+
+                    switch (this.animationType){
+
+                        case 'easeIn':
+
+                            return 1 - Math.sin(Math.acos(timeFraction));
+
+                            break;
+
+                        case 'easeOut':
+
+                            return 1 - (1 - Math.sin(Math.acos(1 - timeFraction)));
+
+                            break;
+
+                        default:
+
+                            return timeFraction;
+
+                    }
+                }
+                arr._createCss = function(){
+
+                    let sheets = document.styleSheets;
+
+                    this.css = {};
+
+                    for(let index = 0; index < this.el.length; index++){
+
+                        this.css[index] = {};
+
+                        for(let i = 0; i < sheets.length; i++){
+
+                            if(sheets[i].href && sheets[i].href.indexOf(location.host) === -1) continue;
+
+                            let rules = sheets[i].rules || sheets[i].cssRules;
+
+                            for(let j in rules){
+
+                                if(!Element.prototype.matches){
+
+                                    Element.prototype.matches = Element.prototype.matchesSelector ||
+                                        Element.prototype.webkitMatchesSelector ||
+                                        Element.prototype.mozMatchesSelector ||
+                                        Element.prototype.msMatchesSelector;
+
+                                }
+
+                                if(this.el[index].matches(rules[j].selectorText)){
+
+                                    let res = /\{\s*?(.+)\s*?\}/.exec(rules[j].cssText);
+
+                                    if(res && typeof res[1] !== 'undefined'){
+
+                                        let arr = res[1].trim().split(';');
+
+                                        for(let k in arr){
+
+                                            let trimEl = arr[k].trim();
+
+                                            if(trimEl){
+
+                                                let property = trimEl.substr(0, trimEl.indexOf(':'));
+                                                let value = trimEl.substr(trimEl.indexOf(':') + 1);
+
+                                                property = this._camelCase(property);
+                                                this.css[index][property.trim()] = value.trim();
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                arr._camelCase = function(str){
+
+                    let cC = /-(\w)/.exec(str);
+
+                    if(cC) str = str.replace(/-\w/, cC[1].toUpperCase());
+
+                    return str;
+
+                }
+
+                arr._createValues = function(el, value, unit, property){
+
+                    let res = isNaN(value) ? 0 : value;
+
+                    let parent = el.parentNode;
+
+                    switch (unit){
+
+                        case 'vw':
+
+                            res = document.documentElement.clientWidth / 100 * value;
+
+                            break;
+
+                        case 'vh':
+
+                            res = document.documentElement.clientHeight / 100 * value;
+
+                            break;
+
+                        case 'em':
+
+                            res = parseFloat(getComputedStyle(parent).fontSize) * value;
+
+                            break;
+
+                        case '%':
+
+                            let position = getComputedStyle(el).position;
+
+                            if(position === 'relative' && (property === 'top' || property === 'bottom')) return 0;
+
+                            let wh = 'Width';
+
+                            if(property === 'top' || property === 'bottom') wh = 'Height';
+
+                            if(position === 'fixed'){
+
+                                res = document.documentElement['client' + wh] / 100 * value;
+
+                            }else if(position === 'absolute'){
+
+                                while(parent && parent !== document){
+
+                                    let position = getComputedStyle(parent).position;
+
+                                    if(position !== 'static' && position !== 'sticky') break;
+
+                                    parent = parent.parentNode;
+
+                                }
+
+                                if(parent === document) res = document.documentElement['client' + wh] / 100 * value;
+                                else res = parseFloat(parent['offset' + wh]) / 100 * value;
+
+                            }else{
+
+                                res = parseFloat(getComputedStyle(parent).width) / 100 * value;
+
+                            }
+
+                            break;
+
+                    }
+
+                    return res;
+
+                }
+
+            }
+
+            arr._animate(properties, time, func, animationType);
+
+
+
+
+        },
+
+
+    }
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Football Field</title>
+    <script src="../park-day6-final/scripts/spray.js"></script>
+</head>
+
+<body>
+    <div class="field" id='field'>
+        <img class="ball" id='ball' src="ball.png" alt="ball">
+        <div class="leftField">
+            <div class="leftBackZone"></div>
+
+            <div class="leftBigZone"></div>
+
+            <div class="polukrugL">
+                <div class="leftCircle"></div>
+            </div>
+
+            <div class="leftSmallZone"></div>
+
+        </div>
+
+        <div class="rightField">
+            <div class="rightSmallZone"></div>
+            <div class="rightBigZone"></div>
+
+            <div class="polukrugR">
+                <div class="rightCircle"></div>
+            </div>
+
+            <div class="centerCircle">
+
+                <div class="smallCircle"></div>
+            </div>
+            <div class="rightBackZone"></div>
+
+        </div>
+    </div>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+
+        /* По условию задачи размер мяча 100px на  100px*/
+        .ball {
+            height: 100px;
+            width: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: all 1s;
+            z-index: 3;
+        }
+
+        /*    Левая половина*/
+        .field {
+            width: 98vw;
+            height: 91vh;
+            padding-top: 5%;
+            background-image: url(field.png);
+            position: relative;
+        }
+
+        .leftField {
+            border: 4px solid white;
+            width: 45%;
+            height: 90%;
+            margin-left: 5%;
+            float: left;
+            position: relative;
+        }
+
+        .leftBackZone {
+            width: 5%;
+            height: 15%;
+            border: 3px solid white;
+            position: absolute;
+            top: 43%;
+            left: -5%;
+        }
+
+        .leftBigZone {
+            width: 30%;
+            height: 60%;
+            border: 3px solid white;
+            position: absolute;
+            top: 20%;
+            border-left: none;
+
+        }
+
+        .leftSmallZone {
+            width: 10%;
+            height: 30%;
+            border: 3px solid white;
+            position: absolute;
+            top: 35%;
+            border-left: none;
+
+        }
+
+        .leftCircle {
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            border: 3px solid white;
+            position: absolute;
+            top: 4%;
+            left: -49%;
+        }
+
+        .polukrugL {
+            width: 30%;
+            height: 30%;
+            border: 3px solid transparent;
+            position: relative;
+            left: 29%;
+            top: 35%;
+            overflow: hidden;
+
+        }
+
+        /*    Правая половина*/
+        .rightField {
+            border: 4px solid white;
+            width: 90%;
+            height: 90%;
+            margin-left: 5%;
+            position: relative;
+        }
+
+        .rightSmallZone {
+            width: 15%;
+            height: 60%;
+            border: 3px solid white;
+            position: absolute;
+            top: 20%;
+            border-right: none;
+            right: 0;
+        }
+
+        .rightBigZone {
+            width: 5%;
+            height: 30%;
+            border: 3px solid white;
+            position: absolute;
+            top: 35%;
+            border-right: none;
+            right: 0;
+        }
+
+        .rightBackZone {
+            width: 3%;
+            height: 15%;
+            border: 3px solid white;
+            position: absolute;
+            top: 43%;
+            right: -3%;
+        }
+
+        .rightCircle {
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            border: 3px solid white;
+            position: absolute;
+            top: 4%;
+            right: -50%;
+        }
+
+        .polukrugR {
+            border: 1px solid transparent;
+            width: 15%;
+            height: 30%;
+            position: absolute;
+            right: 15%;
+            top: 35%;
+            overflow: hidden;
+
+        }
+
+        .centerCircle {
+            border: 3px solid white;
+            width: 16%;
+            height: 32%;
+            position: relative;
+            top: 35%;
+            left: 42%;
+            border-radius: 50%;
+        }
+
+        .smallCircle {
+            width: 11%;
+            height: 11%;
+            border-radius: 50%;
+            border: 3px solid white;
+            position: absolute;
+            left: 43%;
+            top: 41%;
+        }
+    </style>
+    <script>
+
+        // let coord = function(){
+        //     let xS = event.clientX
+        //     let yS = event.clientY
+        //     console.log(xS + " "+yS);
+        // }
+        // addEventListener('click', coord)
+
+        // let ball  = document.querySelector('.ball')
+        // let ballCoord = ball.getBoundingClientRect()
+        // let x=ballCoord.x
+        // let y=ballCoord.y
+        // console.log(x,y)
+        console.log(document.querySelectorAll('.rightBigZone'))
+
+        field.onclick = function (event) {
+
+            let fieldCoords = this.getBoundingClientRect();
+            console.log(fieldCoords.left)
+            console.log(field.clientLeft);
+            let ballCoords = {
+                angle:1000*Math.random(),
+                top: event.clientY /* у клика */ - fieldCoords.top /* у поля */ - ball.clientHeight / 2,
+                left: event.clientX - fieldCoords.left - ball.clientWidth / 2,
+            };
+
+            // запрещаем пересекать верхнюю, левую, правую, нижнюю границу поля
+            if (ballCoords.top < 0) ballCoords.top = 0;
+            if (ballCoords.left < 0) ballCoords.left = 0;
+            if (ballCoords.left + ball.clientWidth > field.clientWidth) {
+                ballCoords.left = field.clientWidth - ball.clientWidth;
+            }
+            if (ballCoords.top + ball.clientHeight > field.clientHeight) {
+                ballCoords.top = field.clientHeight - ball.clientHeight;
+            }
+            let distance = Math.hypot(ballCoords.left-fieldCoords.left,ballCoords.top-fieldCoords.top)
+            ball.style.left = ballCoords.left + 'px';
+            ball.style.transition = `all ${distance/1000}s`;
+            ball.style.top = ballCoords.top + 'px';
+            ball.style.transform = `rotate(${ballCoords.angle}deg)`;
+
+        }
+
+
+
+    </script>
+</body>
+
+</html>
